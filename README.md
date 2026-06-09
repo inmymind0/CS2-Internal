@@ -6,7 +6,7 @@
 
 ## Türkçe
 
-Bu depo, Counter-Strike 2 (CS2) hedef alınarak geliştirilmiş, Win32 API kancalama (hooking) ve Direct3D 11 tabanlı arayüz çizdirme mantığını gösteren, eğitim ve araştırma amacıyla hazırlanmış bir C++ şablonudur.
+Bu repo, Counter-Strike 2 (CS2) hedef alınarak geliştirilmiş, Win32 API kancalama (hooking) ve Direct3D 11 tabanlı arayüz çizdirme mantığını gösteren, eğitim ve araştırma amacıyla hazırlanmış bir C++ şablonudur.
 
 Süreç bellek yönetimi (process memory management), MinHook kütüphanesi ile işlev yönlendirme (function detouring) ve DirectX 11 takas zinciri kancalanarak ImGui ile oyun içi arayüz (GUI) oluşturulması gibi konuların eğitim ve araştırma amacıyla uygulanmasını göstermek için hazırlanmıştır.
 
