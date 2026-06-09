@@ -1,49 +1,6 @@
-# CS2 Internal Cheat Template
+# CS2 Internal Template
 
-[English](#english) | [Türkçe](#türkçe)
-
----
-
-## English
-
-This repository contains a C++ template demonstrating the fundamentals of Win32 API hooking and Direct3D 11 rendering, specifically designed as an educational and research framework targeting Counter-Strike 2 (CS2).
-
-It is designed for educational and research purposes to understand process memory management, function detouring using the MinHook library, and rendering an internal graphical user interface (GUI) via ImGui by hooking the DirectX 11 swap chain.
-
-### Features
-
-- **Direct3D 11 Swap Chain Hooking:** Intercepts `IDXGISwapChain::Present` and `ResizeBuffers` to draw a custom overlay interface (ImGui) directly inside the CS2 window context.
-- **Input Redirection:** Redirections of `WndProc` to handle mouse and keyboard inputs inside the menu window.
-- **Menu Visibility Control:** Hide or show the ImGui menu dynamically using the `INSERT` key. When the menu is hidden, mouse/keyboard inputs are fully passed back to the game.
-- **Centralized Offsets:** Game-related offsets (e.g. local player pawn, controller) are organized cleanly in a centralized [`src/offsets/offsets.h`](file:///c:/Users/imm/source/repos/CS2-Internal/CS2-Internal/src/offsets/offsets.h) header.
-- **Graceful Unload:** Pressing the `DELETE` key restores all hooked functions, closes the Allocated Console, and safely unloads the DLL.
-
-### Prerequisites
-
-To build and compile this project:
-- **Operating System:** Windows 10 or Windows 11
-- **IDE:** Visual Studio 2022 (with the "Desktop development with C++" workload installed)
-- **SDK:** Windows 10/11 SDK (included in modern Visual Studio installations)
-
-### Build Instructions
-
-1. Clone or download this repository.
-2. Navigate to the root directory and open [`CS2-Internal.sln`](file:///c:/Users/imm/source/repos/CS2-Internal/CS2-Internal.sln) using Visual Studio 2022.
-3. In Visual Studio, set the active build configuration to **Release** and target platform to **x64**.
-4. Press `Ctrl + Shift + B` (or select *Build > Build Solution*) to compile the project.
-5. The compiled dynamic link library (`CS2-Internal.dll`) will be generated inside the `build/` directory at the project root.
-
-### Usage / Installation
-
-1. Launch Counter-Strike 2.
-2. Inject the compiled `CS2-Internal.dll` file into the `cs2.exe` process using your preferred injector.
-3. A debug console window will allocate, confirming the status of active hooks (e.g., `[+] [hook] tum hooklar aktif hale getirildi`).
-4. Press **INSERT** to toggle the ImGui menu visibility.
-5. Press **DELETE** to completely unhook the DLL and exit safely.
-
-### Disclaimer & License
-
-This project is developed solely for educational and research purposes. The developers do not promote or encourage cheating, and are not responsible for any misuse, account bans (including Valve Anti-Cheat (VAC) bans), or any other damages arising from the use of this software. The project is licensed under the MIT License.
+[Türkçe](#türkçe) | [English](#english)
 
 ---
 
@@ -87,3 +44,46 @@ Projeyi derlemek için bilgisayarınızda şunların yüklü olması gerekir:
 ### Yasal Uyarı ve Lisans
 
 Bu proje tamamen eğitim ve araştırma amacıyla geliştirilmiştir. Geliştiriciler hile kullanımını teşvik etmez veya desteklemez. Yazılımın kullanımından doğabilecek hiçbir durumdan, olası hesap yasaklamalarından (VAC dahil) veya diğer zararlardan geliştiriciler sorumlu değildir. Proje MIT Lisansı ile lisanslanmıştır.
+
+---
+
+## English
+
+This repository contains a C++ template demonstrating the fundamentals of Win32 API hooking and Direct3D 11 rendering, specifically designed as an educational and research framework targeting Counter-Strike 2 (CS2).
+
+It is designed for educational and research purposes to understand process memory management, function detouring using the MinHook library, and rendering an internal graphical user interface (GUI) via ImGui by hooking the DirectX 11 swap chain.
+
+### Features
+
+- **Direct3D 11 Swap Chain Hooking:** Intercepts `IDXGISwapChain::Present` and `ResizeBuffers` to draw a custom overlay interface (ImGui) directly inside the CS2 window context.
+- **Input Redirection:** Redirections of `WndProc` to handle mouse and keyboard inputs inside the menu window.
+- **Menu Visibility Control:** Hide or show the ImGui menu dynamically using the `INSERT` key. When the menu is hidden, mouse/keyboard inputs are fully passed back to the game.
+- **Centralized Offsets:** Game-related offsets (e.g. local player pawn, controller) are organized cleanly in a centralized [`src/offsets/offsets.h`](file:///c:/Users/imm/source/repos/CS2-Internal/CS2-Internal/src/offsets/offsets.h) header.
+- **Graceful Unload:** Pressing the `DELETE` key restores all hooked functions, closes the Allocated Console, and safely unloads the DLL.
+
+### Prerequisites
+
+To build and compile this project:
+- **Operating System:** Windows 10 or Windows 11
+- **IDE:** Visual Studio 2022 (with the "Desktop development with C++" workload installed)
+- **SDK:** Windows 10/11 SDK (included in modern Visual Studio installations)
+
+### Build Instructions
+
+1. Clone or download this repository.
+2. Navigate to the root directory and open [`CS2-Internal.sln`](file:///c:/Users/imm/source/repos/CS2-Internal/CS2-Internal.sln) using Visual Studio 2022.
+3. In Visual Studio, set the active build configuration to **Release** and target platform to **x64**.
+4. Press `Ctrl + Shift + B` (or select *Build > Build Solution*) to compile the project.
+5. The compiled dynamic link library (`CS2-Internal.dll`) will be generated inside the `build/` directory at the project root.
+
+### Usage / Installation
+
+1. Launch Counter-Strike 2.
+2. Inject the compiled `CS2-Internal.dll` file into the `cs2.exe` process using your preferred injector.
+3. A debug console window will allocate, confirming the status of active hooks (e.g., `[+] [hook] tum hooklar aktif hale getirildi`).
+4. Press **INSERT** to toggle the ImGui menu visibility.
+5. Press **DELETE** to completely unhook the DLL and exit safely.
+
+### Disclaimer & License
+
+This project is developed solely for educational and research purposes. The developers do not promote or encourage cheating, and are not responsible for any misuse, account bans (including Valve Anti-Cheat (VAC) bans), or any other damages arising from the use of this software. The project is licensed under the MIT License.
