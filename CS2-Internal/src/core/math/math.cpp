@@ -1,6 +1,9 @@
 #include "math.h"
 #include <cmath>
 #include <algorithm>
+#include "core/mem/mem.h"
+#include "cs2/signatures.h"
+#include "cs2/helpers/devlog.h"
 
 namespace Math {
 	void AngleVectors(const QAngle_t& angles, Vec3& forward, Vec3& right, Vec3& up) {
@@ -41,5 +44,52 @@ namespace Math {
 		if (angles.yaw > 180.f) angles.yaw = 180.f;
 		if (angles.yaw < -180.f) angles.yaw = -180.f;
 		angles.roll = 0.f;
+	}
+
+	bool WorldToScreen(const Vec3& pos, Vec2& screen, const ViewMatrix& matrix, int width, int height) {
+		static uintptr_t screenTransformAddr = 0;
+		static bool hasSearched = false;
+		if (!hasSearched) {
+			screenTransformAddr = Mem::PatternScan(SCREENTRANSFORM_PATTERN, CLIENT_DLL);
+			hasSearched = true;
+			if (screenTransformAddr) {
+				DEV_LOG_HEX("[debug] ScreenTransform adresi bulundu: ", screenTransformAddr);
+			} else {
+				DEV_LOG("[debug] ScreenTransform adresi bulunamadi");
+			}
+		}
+
+		if (screenTransformAddr) {
+			using ScreenTransformFn = bool(__fastcall*)(const Vec3&, Vec3&);
+			ScreenTransformFn oScreenTransform = (ScreenTransformFn)screenTransformAddr;
+
+			Vec3 outPos = {};
+			bool notClipped = !oScreenTransform(pos, outPos);
+			if (notClipped) {
+				screen.x = ((outPos.x + 1.0f) * 0.5f) * width;
+				screen.y = (float)height - (((outPos.y + 1.0f) * 0.5f) * height);
+				return true;
+			}
+			return false;
+		}
+
+		float w = matrix.m[3][0] * pos.x + matrix.m[3][1] * pos.y + matrix.m[3][2] * pos.z + matrix.m[3][3];
+		if (w < 0.01f)
+			return false;
+
+		float x = matrix.m[0][0] * pos.x + matrix.m[0][1] * pos.y + matrix.m[0][2] * pos.z + matrix.m[0][3];
+		float y = matrix.m[1][0] * pos.x + matrix.m[1][1] * pos.y + matrix.m[1][2] * pos.z + matrix.m[1][3];
+
+		float invw = 1.0f / w;
+		x *= invw;
+		y *= invw;
+
+		float ndcX = (x + 1.0f) * 0.5f;
+		float ndcY = (1.0f - y) * 0.5f;
+
+		screen.x = ndcX * width;
+		screen.y = ndcY * height;
+
+		return true;
 	}
 }

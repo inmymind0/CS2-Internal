@@ -1,34 +1,23 @@
 #include <Windows.h>
 #include <thread>
-#include <iostream>
-#include <clocale>
-#include "cs2/hooks/hooks.h"
+#include "cs2/client.h"
 
 DWORD WINAPI MainThread(LPVOID lpParam) {
-	AllocConsole();
-	FILE* f;
-	freopen_s(&f, "CONOUT$", "w", stdout);
+	HMODULE hModule = (HMODULE)lpParam;
 
-	if (hooks::Init()) {
-		std::cout << "[+] [hook] tum hooklar aktif hale getirildi" << std::endl;
-	} else {
-		std::cout << "[-] [hata] took kurulumu basarisiz oldu" << std::endl;
+	if (!CCS2Client::Get().Initialize(hModule)) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+		FreeLibraryAndExitThread(hModule, 0);
+		return 0;
 	}
 
 	while (!GetAsyncKeyState(VK_DELETE)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 
-	std::cout << "[!] [sistem] cikis tusu algilandi..." << std::endl;
-	hooks::Shutdown();
-	std::cout << "[+] [hook] hooklar kaldirildi" << std::endl;
+	CCS2Client::Get().Shutdown();
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-
-	if (f) fclose(f);
-	FreeConsole();
-	FreeLibraryAndExitThread((HMODULE)lpParam, 0);
+	FreeLibraryAndExitThread(hModule, 0);
 	return 0;
 }
 

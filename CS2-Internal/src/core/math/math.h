@@ -25,6 +25,10 @@ struct Vec3 {
 		return x * b.x + y * b.y + z * b.z;
 	}
 
+	inline Vec3 operator+(const Vec3& b) const {
+		return Vec3(x + b.x, y + b.y, z + b.z);
+	}
+
 	inline void Normalize() {
 		float len = sqrtf(x * x + y * y + z * z);
 		if (len != 0.f) {
@@ -42,8 +46,13 @@ struct QAngle_t {
 	QAngle_t(float _pitch, float _yaw, float _roll) : pitch(_pitch), yaw(_yaw), roll(_roll) {}
 };
 
+struct ViewMatrix {
+	float m[4][4];
+};
+
 namespace Math {
 	void AngleVectors(const QAngle_t& angles, Vec3& forward, Vec3& right, Vec3& up);
 	void NormalizeAngles(QAngle_t& angles);
 	void ClampAngles(QAngle_t& angles);
+	bool WorldToScreen(const Vec3& pos, Vec2& screen, const ViewMatrix& matrix, int width, int height);
 }

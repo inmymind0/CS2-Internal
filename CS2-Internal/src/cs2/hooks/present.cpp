@@ -4,10 +4,20 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "Hook_CreateMove.h"
+#include "offsets/offsets.h"
+#include "core/math/math.h"
+#include "core/mem/mem.h"
+#include "cs2/settings.h"
+#include "cs2/signatures.h"
+#include "cs2/features/visuals.h"
+#include "cs2/helpers/devlog.h"
+#include "cs2/helpers/projectsettings.h"
+#include <iostream>
 
 PresentFn oPresent = nullptr;
 ResizeBuffersFn oResizeBuffers = nullptr;
 CreateSwapChainFn oCreateSwapChain = nullptr;
+uintptr_t g_GetBaseEntityAddr = 0;
 
 bool Initialized = false;
 bool g_MenuVisible = true;
@@ -53,6 +63,12 @@ bool initHkPresent(IDXGISwapChain* pSwapChain) {
 			window = sd.OutputWindow;
 			oWndProc = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 			InitImGui();
+			g_GetBaseEntityAddr = Mem::PatternScan(GETBASEENTITY_PATTERN, CLIENT_DLL);
+			if (g_GetBaseEntityAddr) {
+				DEV_LOG_HEX("[debug] GetBaseEntity adresi bulundu: ", g_GetBaseEntityAddr);
+			} else {
+				DEV_LOG("[debug] GetBaseEntity adresi bulunamadi");
+			}
 			Initialized = true;
 		}
 	}
@@ -75,23 +91,76 @@ HRESULT hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT flags)
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	#ifdef CHEAT_NAME
+	ImGui::GetForegroundDrawList()->AddText(ImVec2(11.f, 11.f), ImColor(0, 0, 0, 255), CHEAT_NAME);
+	ImGui::GetForegroundDrawList()->AddText(ImVec2(10.f, 10.f), ImColor(255, 0, 0, 255), CHEAT_NAME);
+	#endif
+
+
+
+	uintptr_t clientBase = (uintptr_t)GetModuleHandleA(CLIENT_DLL);
+	if (clientBase) {
+		uintptr_t entityList = 0;
+		uintptr_t localController = 0;
+
+		__try {
+			entityList = *(uintptr_t*)(clientBase + offsets::client_dll::dwEntityList);
+			localController = *(uintptr_t*)(clientBase + offsets::client_dll::dwLocalPlayerController);
+		} __except (EXCEPTION_EXECUTE_HANDLER) {
+			entityList = 0;
+			localController = 0;
+		}
+
+		if (entityList && localController) {
+			uint8_t localTeam = 0;
+			ViewMatrix viewMatrix = {};
+			bool baseSetupOk = false;
+
+			__try {
+				localTeam = *(uint8_t*)(localController + offsets::client_dll::C_BaseEntity::m_iTeamNum);
+				viewMatrix = *(ViewMatrix*)(clientBase + offsets::client_dll::dwViewMatrix);
+				baseSetupOk = true;
+			} __except (EXCEPTION_EXECUTE_HANDLER) {
+				baseSetupOk = false;
+			}
+
+			if (baseSetupOk) {
+				ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+				int width = (int)displaySize.x;
+				int height = (int)displaySize.y;
+
+				ImDrawList* drawList = ImGui::GetForegroundDrawList();
+				Features::Visuals::RenderESP(drawList, entityList, localController, localTeam, viewMatrix, width, height);
+			}
+		}
+	}
+
 	if (g_MenuVisible) {
 		ImGui::Begin("cs2 anti-aim by nocontex", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		
-		ImGui::Checkbox("Enable Anti-Aim", &g_AntiAimEnabled);
+		ImGui::Checkbox("Enable Anti-Aim", &Settings::AntiAim::Enabled);
 
-		if (g_AntiAimEnabled) {
+		if (Settings::AntiAim::Enabled) {
 			ImGui::Separator();
 			
 			const char* pitchModes[] = { "None", "Down (89)", "Up (-89)", "Zero" };
-			ImGui::Combo("Pitch Mode", &g_AntiAimPitchMode, pitchModes, IM_ARRAYSIZE(pitchModes));
+			ImGui::Combo("Pitch Mode", &Settings::AntiAim::PitchMode, pitchModes, IM_ARRAYSIZE(pitchModes));
 
 			const char* yawModes[] = { "None", "Backward (180)", "Left (-90)", "Right (90)" };
-			ImGui::Combo("Yaw Mode", &g_AntiAimYawMode, yawModes, IM_ARRAYSIZE(yawModes));
+			ImGui::Combo("Yaw Mode", &Settings::AntiAim::YawMode, yawModes, IM_ARRAYSIZE(yawModes));
 
-			ImGui::SliderFloat("Yaw Offset", &g_AntiAimYawOffset, -180.f, 180.f, "%.1f");
+			ImGui::SliderFloat("Yaw Offset", &Settings::AntiAim::YawOffset, -180.f, 180.f, "%.1f");
 
-			ImGui::SliderFloat("Roll", &g_AntiAimRoll, -50.f, 50.f, "%.1f");
+			ImGui::SliderFloat("Roll", &Settings::AntiAim::Roll, -50.f, 50.f, "%.1f");
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Visuals");
+		ImGui::Checkbox("Enable ESP", &Settings::Visuals::EspEnabled);
+		if (Settings::Visuals::EspEnabled) {
+			ImGui::Checkbox("Box ESP", &Settings::Visuals::BoxEsp);
+			ImGui::Checkbox("Name ESP", &Settings::Visuals::NameEsp);
+			ImGui::Checkbox("Draw Teammates", &Settings::Visuals::EspTeammates);
 		}
 
 		ImGui::End();

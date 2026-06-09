@@ -188,6 +188,13 @@
     <ClInclude Include="src\cs2\hooks\present.h" />
     <ClInclude Include="src\cs2\hooks\Hook_ValidateInput.h" />
     <ClInclude Include="src\cs2\hooks\Hook_SetViewAngles.h" />
+    <ClInclude Include="src\cs2\signatures.h" />
+    <ClInclude Include="src\cs2\settings.h" />
+    <ClInclude Include="src\cs2\features\visuals.h" />
+    <ClInclude Include="src\cs2\features\antiaim.h" />
+    <ClInclude Include="src\cs2\client.h" />
+    <ClInclude Include="src\cs2\helpers\projectsettings.h" />
+    <ClInclude Include="src\cs2\helpers\devlog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ext\imgui\imgui.cpp" />
@@ -209,6 +216,10 @@
     <ClCompile Include="src\cs2\hooks\present.cpp" />
     <ClCompile Include="src\cs2\hooks\Hook_ValidateInput.cpp" />
     <ClCompile Include="src\cs2\hooks\Hook_SetViewAngles.cpp" />
+    <ClCompile Include="src\cs2\features\visuals.cpp" />
+    <ClCompile Include="src\cs2\features\antiaim.cpp" />
+    <ClCompile Include="src\cs2\client.cpp" />
+    <ClCompile Include="src\cs2\helpers\devlog.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>

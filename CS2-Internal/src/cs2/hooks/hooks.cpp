@@ -1,57 +1,56 @@
 #include "hooks.h"
 
 #include "minhook/include/MinHook.h"
-
-#include <iostream>
 #include "core/mem/mem.h"
 #include "present.h"
 #include "Hook_CreateMove.h"
 #include "Hook_ValidateInput.h"
 #include "Hook_SetViewAngles.h"
+#include "cs2/helpers/devlog.h"
 
 bool hooks::Init() {
 	if (MH_Initialize() != MH_OK) {
-		std::cout << "[-] [hata] MH_Initialize basarisiz" << std::endl;
+		DEV_LOG("[-] [hata] MH_Initialize basarisiz");
 		return false;
 	}
 
-	std::cout << "[+] [minhook] minhook baslatildi" << std::endl;
+	DEV_LOG("[+] [minhook] MinHook baslatildi");
 
 	if (!SetupPresentHook()) {
-		std::cout << "[-] [hata] SetupPresentHook olusturulamadi" << std::endl;
+		DEV_LOG("[-] [hata] SetupPresentHook olusturulamadi");
 		return false;
 	}
-	std::cout << "[+] [hook] Present hooku kuruldu" << std::endl;
+	DEV_LOG("[+] [hook] Present hooku kuruldu");
 
 	if (!SetupResizeBuffersHook()) {
-		std::cout << "[-] [hata] SetupResizeBuffersHook olusturulamadi" << std::endl;
+		DEV_LOG("[-] [hata] SetupResizeBuffersHook olusturulamadi");
 		return false;
 	}
-	std::cout << "[+] [hook] ResizeBuffers hooku kuruldu" << std::endl;
+	DEV_LOG("[+] [hook] ResizeBuffers hooku kuruldu");
 
 	if (!SetupCreateSwapChainHook()) {
-		std::cout << "[-] [hata] SetupCreateSwapChainHook olusturulamadi" << std::endl;
+		DEV_LOG("[-] [hata] SetupCreateSwapChainHook olusturulamadi");
 		return false;
 	}
-	std::cout << "[+] [hook] CreateSwapChain hooku kuruldu" << std::endl;
+	DEV_LOG("[+] [hook] CreateSwapChain hooku kuruldu");
 
 	if (!SetupCreateMoveHook()) {
-		std::cout << "[-] [hata] SetupCreateMoveHook olusturulamadi" << std::endl;
+		DEV_LOG("[-] [hata] SetupCreateMoveHook olusturulamadi");
 		return false;
 	}
-	std::cout << "[+] [hook] CreateMove hooku kuruldu" << std::endl;
+	DEV_LOG("[+] [hook] CreateMove hooku kuruldu");
 
 	if (!SetupValidateInputHook()) {
-		std::cout << "[-] [hata] SetupValidateInputHook olusturulamadi" << std::endl;
+		DEV_LOG("[-] [hata] SetupValidateInputHook olusturulamadi");
 		return false;
 	}
-	std::cout << "[+] [hook] ValidateInput hooku kuruldu" << std::endl;
+	DEV_LOG("[+] [hook] ValidateInput hooku kuruldu");
 
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK) {
-		std::cout << "[-] [hata] hooklar aktif edilemedi" << std::endl;
+		DEV_LOG("[-] [hata] hooklar aktif edilemedi");
 		return false;
 	}
-	std::cout << "[+] [hook] tum hooklar aktif edildi" << std::endl;
+	DEV_LOG("[+] [hook] tum hooklar aktif edildi");
 
 	return true;
 }
@@ -63,13 +62,13 @@ void hooks::Shutdown() {
 }
 
 bool hooks::SetupValidateInputHook() {
-	uintptr_t setviewanglesAddr = Mem::PatternScan(SETVIEWANGLES_PATTERN, "client.dll");
+	uintptr_t setviewanglesAddr = Mem::PatternScan(SETVIEWANGLES_PATTERN, CLIENT_DLL);
 	if (!setviewanglesAddr) {
 		return false;
 	}
 	oSetViewAngles = reinterpret_cast<SetViewAnglesFn>(setviewanglesAddr);
 
-	uintptr_t validateinputAddr = Mem::PatternScan(VALIDATEINPUT_PATTERN, "client.dll");
+	uintptr_t validateinputAddr = Mem::PatternScan(VALIDATEINPUT_PATTERN, CLIENT_DLL);
 	if (!validateinputAddr) {
 		return false;
 	}
@@ -82,7 +81,7 @@ bool hooks::SetupValidateInputHook() {
 }
 
 bool hooks::SetupPresentHook() {
-	uintptr_t presentAddr = Mem::PatternScan(PRESENT_PATTERN, "GameOverlayRenderer64.dll");
+	uintptr_t presentAddr = Mem::PatternScan(PRESENT_PATTERN, GAMEOVERLAY_DLL);
 	if (!presentAddr) {
 		return false;
 	}
@@ -95,7 +94,7 @@ bool hooks::SetupPresentHook() {
 }
 
 bool hooks::SetupCreateMoveHook() {
-	uintptr_t createmoveAddr = Mem::PatternScan(CREATEMOVE_PATTERN, "client.dll");
+	uintptr_t createmoveAddr = Mem::PatternScan(CREATEMOVE_PATTERN, CLIENT_DLL);
 	if (!createmoveAddr) {
 		return false;
 	}
@@ -108,7 +107,7 @@ bool hooks::SetupCreateMoveHook() {
 }
 
 bool hooks::SetupResizeBuffersHook() {
-	uintptr_t resizebuffersAddr = Mem::PatternScan(RESIZEBUFFERS_PATTERN, "GameOverlayRenderer64.dll");
+	uintptr_t resizebuffersAddr = Mem::PatternScan(RESIZEBUFFERS_PATTERN, GAMEOVERLAY_DLL);
 	if (!resizebuffersAddr) {
 		return false;
 	}
@@ -121,7 +120,7 @@ bool hooks::SetupResizeBuffersHook() {
 }
 
 bool hooks::SetupCreateSwapChainHook() {
-	uintptr_t createswapchainAddr = Mem::PatternScan(CREATESWAPCHAIN_PATTERN, "GameOverlayRenderer64.dll");
+	uintptr_t createswapchainAddr = Mem::PatternScan(CREATESWAPCHAIN_PATTERN, GAMEOVERLAY_DLL);
 	if (!createswapchainAddr) {
 		return false;
 	}
