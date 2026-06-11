@@ -3,10 +3,10 @@
 
 namespace offsets {
     namespace client_dll {
-        constexpr uintptr_t dwLocalPlayerController = 0x231F700;
-        constexpr uintptr_t dwLocalPlayerPawn = 0x2340698;
-        constexpr uintptr_t dwEntityList = 0x24E6590;
-        constexpr uintptr_t dwViewMatrix = 0x2345B30;
+        constexpr uintptr_t dwLocalPlayerController = 0x2320720;
+        constexpr uintptr_t dwLocalPlayerPawn = 0x2341698;
+        constexpr uintptr_t dwEntityList = 0x24E76A0;
+        constexpr uintptr_t dwViewMatrix = 0x2346B30;
 
         namespace CCSPlayerController {
             constexpr uintptr_t m_bPawnIsAlive = 0x914;
