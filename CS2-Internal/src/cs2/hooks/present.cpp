@@ -136,7 +136,7 @@ HRESULT hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT flags)
 	}
 
 	if (g_MenuVisible) {
-		ImGui::Begin("cs2 anti-aim by nocontex", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("cs2 internal base by nocontex", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		
 		ImGui::Checkbox("Enable Anti-Aim", &Settings::AntiAim::Enabled);
 
@@ -161,6 +161,32 @@ HRESULT hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT flags)
 			ImGui::Checkbox("Box ESP", &Settings::Visuals::BoxEsp);
 			ImGui::Checkbox("Name ESP", &Settings::Visuals::NameEsp);
 			ImGui::Checkbox("Draw Teammates", &Settings::Visuals::EspTeammates);
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Chams");
+		ImGui::Checkbox("Active Chams", &Settings::Chams::Active);
+		if (Settings::Chams::Active) {
+			ImGui::Checkbox("Visible Chams", &Settings::Chams::VisibleActive);
+			
+			const char* materials[] = { 
+				"Generic", "Unlit", "Solid", "Latex"
+			};
+			
+			if (Settings::Chams::VisibleActive) {
+				ImGui::Combo("Visible Material", &Settings::Chams::Material, materials, IM_ARRAYSIZE(materials));
+				ImGui::ColorEdit4("Visible Enemy Color", Settings::Chams::VisibleEnemy);
+				ImGui::ColorEdit4("Visible Team Color", Settings::Chams::VisibleTeam);
+			}
+
+			ImGui::Checkbox("Invisible Chams", &Settings::Chams::WallhackMode);
+			if (Settings::Chams::WallhackMode) {
+				ImGui::Combo("Invisible Material", &Settings::Chams::WallhackMaterial, materials, IM_ARRAYSIZE(materials));
+				ImGui::ColorEdit4("Invisible Enemy Color", Settings::Chams::InvisibleEnemy);
+				ImGui::ColorEdit4("Invisible Team Color", Settings::Chams::InvisibleTeam);
+			}
+
+			ImGui::Checkbox("Chams Teammates", &Settings::Chams::Team);
 		}
 
 		ImGui::End();

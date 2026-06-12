@@ -11,4 +11,6 @@ namespace hooks {
 	bool SetupCreateSwapChainHook();
 	bool SetupCreateMoveHook();
 	bool SetupValidateInputHook();
-}
+	bool SetupDrawObjectHook();
+	bool SetupOnGeneratePrimitivesHook();
+}

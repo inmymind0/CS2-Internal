@@ -6,6 +6,9 @@
 #include "Hook_CreateMove.h"
 #include "Hook_ValidateInput.h"
 #include "Hook_SetViewAngles.h"
+#include "Hook_DrawObject.h"
+#include "Hook_OnGeneratePrimitives.h"
+#include "cs2/features/chams.h"
 #include "cs2/helpers/devlog.h"
 
 bool hooks::Init() {
@@ -15,6 +18,8 @@ bool hooks::Init() {
 	}
 
 	DEV_LOG("[+] [minhook] MinHook baslatildi");
+
+	Features::Chams::Initialize();
 
 	if (!SetupPresentHook()) {
 		DEV_LOG("[-] [hata] SetupPresentHook olusturulamadi");
@@ -46,6 +51,20 @@ bool hooks::Init() {
 	}
 	DEV_LOG("[+] [hook] ValidateInput hooku kuruldu");
 
+	if (!SetupDrawObjectHook()) {
+		DEV_LOG("[-] [hata] SetupDrawObjectHook olusturulamadi");
+	}
+	else {
+		DEV_LOG("[+] [hook] DrawObject hooku kuruldu");
+	}
+
+	if (!SetupOnGeneratePrimitivesHook()) {
+		DEV_LOG("[-] [hata] SetupOnGeneratePrimitivesHook olusturulamadi");
+	}
+	else {
+		DEV_LOG("[+] [hook] OnGeneratePrimitives hooku kuruldu");
+	}
+
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK) {
 		DEV_LOG("[-] [hata] hooklar aktif edilemedi");
 		return false;
@@ -56,10 +75,12 @@ bool hooks::Init() {
 }
 
 void hooks::Shutdown() {
+	Features::Chams::Shutdown();
 	MH_DisableHook(MH_ALL_HOOKS);
 	MH_RemoveHook(MH_ALL_HOOKS);
 	MH_Uninitialize();
 }
+
 
 bool hooks::SetupValidateInputHook() {
 	uintptr_t setviewanglesAddr = Mem::PatternScan(SETVIEWANGLES_PATTERN, CLIENT_DLL);
@@ -81,7 +102,7 @@ bool hooks::SetupValidateInputHook() {
 }
 
 bool hooks::SetupPresentHook() {
-	uintptr_t presentAddr = Mem::PatternScan(PRESENT_PATTERN, GAMEOVERLAY_DLL);
+	uintptr_t presentAddr = Mem::PatternScan(PRESENT_PATTERN, GAMEOVERLAYRENDERER64_DLL);
 	if (!presentAddr) {
 		return false;
 	}
@@ -107,7 +128,7 @@ bool hooks::SetupCreateMoveHook() {
 }
 
 bool hooks::SetupResizeBuffersHook() {
-	uintptr_t resizebuffersAddr = Mem::PatternScan(RESIZEBUFFERS_PATTERN, GAMEOVERLAY_DLL);
+	uintptr_t resizebuffersAddr = Mem::PatternScan(RESIZEBUFFERS_PATTERN, GAMEOVERLAYRENDERER64_DLL);
 	if (!resizebuffersAddr) {
 		return false;
 	}
@@ -120,7 +141,7 @@ bool hooks::SetupResizeBuffersHook() {
 }
 
 bool hooks::SetupCreateSwapChainHook() {
-	uintptr_t createswapchainAddr = Mem::PatternScan(CREATESWAPCHAIN_PATTERN, GAMEOVERLAY_DLL);
+	uintptr_t createswapchainAddr = Mem::PatternScan(CREATESWAPCHAIN_PATTERN, GAMEOVERLAYRENDERER64_DLL);
 	if (!createswapchainAddr) {
 		return false;
 	}
@@ -129,5 +150,25 @@ bool hooks::SetupCreateSwapChainHook() {
 		return false;
 	}
 
+	return true;
+}
+
+bool hooks::SetupDrawObjectHook() {
+	uintptr_t drawobjectAddr = Mem::PatternScan(DRAWOBJECT_PATTERN, SCENESYSTEM_DLL);
+	if (!drawobjectAddr) return false;
+
+	if (MH_CreateHook(reinterpret_cast<LPVOID>(drawobjectAddr), &hkDrawObject, reinterpret_cast<LPVOID*>(&oDrawObject)) != MH_OK) {
+		return false;
+	}
+	return true;
+}
+
+bool hooks::SetupOnGeneratePrimitivesHook() {
+	uintptr_t ongenerateprimitivesAddr = Mem::PatternScan(ONGENERATEPRIMITIVES_PATTERN, SCENESYSTEM_DLL);
+	if (!ongenerateprimitivesAddr) return false;
+
+	if (MH_CreateHook(reinterpret_cast<LPVOID>(ongenerateprimitivesAddr), &hkOnGeneratePrimitives, reinterpret_cast<LPVOID*>(&oOnGeneratePrimitives)) != MH_OK) {
+		return false;
+	}
 	return true;
 }

@@ -87,6 +87,12 @@
     <ClInclude Include="src\cs2\hooks\Hook_SetViewAngles.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
+    <ClInclude Include="src\cs2\hooks\Hook_DrawObject.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cs2\hooks\Hook_OnGeneratePrimitives.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
     <ClInclude Include="src\cs2\hooks\Hook_GetViewAngles.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
@@ -100,6 +106,9 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="src\cs2\features\antiaim.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cs2\features\chams.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="src\cs2\client.h">
@@ -173,6 +182,12 @@
     <ClCompile Include="src\cs2\hooks\Hook_SetViewAngles.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="src\cs2\hooks\Hook_DrawObject.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cs2\hooks\Hook_OnGeneratePrimitives.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
     <ClCompile Include="src\cs2\hooks\Hook_GetViewAngles.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -180,6 +195,9 @@
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="src\cs2\features\antiaim.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cs2\features\chams.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="src\cs2\client.cpp">
